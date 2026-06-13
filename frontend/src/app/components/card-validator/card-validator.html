@@ -1,1 +1,60 @@
-<p>card-validator works!</p>
+<div class="container">
+
+  <div class="card">
+
+    <h1>Credit Card Validator</h1>
+
+    <p class="subtitle">
+      Validate credit cards using the payment gateway
+    </p>
+
+    <div class="form-group">
+
+      <label>Card Number</label>
+
+      <input
+        type="text"
+        maxlength="12"
+        [(ngModel)]="cardNumber"
+        placeholder="123456789012"
+      />
+
+    </div>
+
+    <div class="form-group">
+
+      <label>CVC</label>
+
+      <input
+        type="text"
+        maxlength="3"
+        [(ngModel)]="cvc"
+        placeholder="123"
+      />
+
+    </div>
+
+    <button
+      (click)="validateCard()"
+      [disabled]="!isFormValid()"
+    >
+      Validate Card
+    </button>
+
+    @if(result){
+
+      <div
+        class="result"
+        [class.approved]="result === 'APPROVED'"
+        [class.rejected]="result === 'REJECTED'"
+      >
+
+        {{ result }}
+
+      </div>
+
+    }
+
+  </div>
+
+</div>
