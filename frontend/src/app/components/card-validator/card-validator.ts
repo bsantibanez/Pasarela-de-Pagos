@@ -14,38 +14,40 @@ export class CardValidator {
   cardNumber = '';
   cvc = '';
   result = '';
+  step = 1;
 
-  constructor(
-    private cardService: CardService
-  ) {}
+  constructor(private cardService: CardService) {}
+
+  formatDisplay(num: string): string {
+    return num.replace(/(.{4})/g, '$1 ').trim();
+  }
+
+  isCardNumberValid(): boolean {
+    return /^\d{12}$/.test(this.cardNumber);
+  }
 
   isFormValid(): boolean {
+    return this.isCardNumberValid() && /^\d{3}$/.test(this.cvc);
+  }
 
-    return (
-      /^\d{12}$/.test(this.cardNumber) &&
-      /^\d{3}$/.test(this.cvc)
-    );
+  goToStep2() {
+    if (this.isCardNumberValid()) this.step = 2;
+  }
 
+  goToStep1() {
+    this.step = 1;
+    this.result = '';
   }
 
   validateCard() {
-
-    if (!this.isFormValid()) {
-      return;
-    }
+    if (!this.isFormValid()) return;
 
     this.cardService.validateCard({
       cardNumber: this.cardNumber,
       cvc: this.cvc
-    })
-    .subscribe({
-      next: (response) => {
-        this.result = response.status;
-      },
-      error: () => {
-        this.result = 'ERROR';
-      }
+    }).subscribe({
+      next: (response) => { this.result = response.status; },
+      error: () => { this.result = 'ERROR'; }
     });
-
   }
 }

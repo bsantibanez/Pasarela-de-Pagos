@@ -1,60 +1,88 @@
 <div class="container">
-
   <div class="card">
 
-    <h1>Credit Card Validator</h1>
+    <h1>Validador Tarjeta de Credito</h1>
 
-    <p class="subtitle">
-      Validate credit cards using the payment gateway
-    </p>
+    <!-- Tarjeta visual -->
+    <div class="credit-card-wrapper">
+      <div class="credit-card" [class.flipped]="step === 2">
 
-    <div class="form-group">
+        <!-- Frente -->
+        <div class="face front">
+          <div class="chip">
+            <div class="chip-line"></div>
+            <div class="chip-line"></div>
+            <div class="chip-line"></div>
+            <div class="chip-col"></div>
+            <div class="chip-col"></div>
+            <div class="chip-col"></div>
+          </div>
+          <div class="card-number-display">
+            {{ formatDisplay(cardNumber) || '•••• •••• ••••' }}
+          </div>
+        </div>
 
-      <label>Card Number</label>
+        <!-- Reverso -->
+        <div class="face back">
+          <div class="magnetic-strip"></div>
+          <div class="cvv-area">
+            <span class="card-label">CVV 
+            </span>
+            <span class="card-value cvv-value">{{ cvc || '•••' }}</span>
+          </div>
+        </div>
 
-      <input
-        type="text"
-        maxlength="12"
-        [(ngModel)]="cardNumber"
-        placeholder="123456789012"
-      />
-
+      </div>
     </div>
 
-    <div class="form-group">
+    <!-- Paso 1: número -->
+    @if (step === 1) {
+      <div class="form-group">
+        <label>Numero de tarjeta</label>
+        <input
+          type="text"
+          maxlength="12"
+          [(ngModel)]="cardNumber"
+          placeholder="123456789012"
+        />
+      </div>
 
-      <label>CVC</label>
+      <button
+        (click)="goToStep2()"
+        [disabled]="!isCardNumberValid()"
+      >
+        Siguiente
+      </button>
+    }
 
-      <input
-        type="text"
-        maxlength="3"
-        [(ngModel)]="cvc"
-        placeholder="123"
-      />
+    <!-- Paso 2: CVV -->
+    @if (step === 2) {
+      <div class="form-group">
+        <label>Codigo de seguridad (CVV)</label>
+        <input
+          type="text"
+          maxlength="3"
+          [(ngModel)]="cvc"
+          placeholder="123"
+          autofocus
+        />
+      </div>
 
-    </div>
+      <div class="btn-row">
+        <button class="btn-secondary" (click)="goToStep1()">Atrás</button>
+        <button (click)="validateCard()" [disabled]="!isFormValid()">Verificar</button>
+      </div>
+    }
 
-    <button
-      (click)="validateCard()"
-      [disabled]="!isFormValid()"
-    >
-      Validate Card
-    </button>
-
-    @if(result){
-
+    @if (result) {
       <div
         class="result"
         [class.approved]="result === 'APPROVED'"
         [class.rejected]="result === 'REJECTED'"
       >
-
         {{ result }}
-
       </div>
-
     }
 
   </div>
-
 </div>
